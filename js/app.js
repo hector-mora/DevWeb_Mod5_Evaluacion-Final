@@ -31,9 +31,6 @@ function eligeDulce(){
   ruta = "image/"+numero+".png";
 };
 
-function cambioimagen(f,c,numDulce){
-  mzTablero[f][c] = numDulce;
-};
 
 //Función que reinicia el juego
 function reiniciar(){
@@ -50,7 +47,6 @@ $(document).ready(function(){
   //Cargar valores a la matriz
   var mzTablero = new Array(numMaxRowCol+1);
   var strDulce;
-  var id=1;
 
   for (i = 0; i <= numMaxRowCol; i++)
   {
@@ -63,46 +59,24 @@ $(document).ready(function(){
       mzTablero[i][j] = numero;
       strDulce = document.createElement("img");
       strDulce.src = ruta;
-      strDulce.id = id;
-      $("div[class^='col']")[j].prepend(strDulce);
+      $("div[class^='col']")[i].prepend(strDulce);
       $("#"+id).addClass("elemento");
-      console.log("[i] "+i+",[j] "+j+" dulce numero: "+mzTablero[i][j]+ " ruta: "+ruta+" y nuevo html: "+strDulce);
-      console.log($("#"+id));
-      id= id+1;
+      //console.log("[i] "+i+",[j] "+j+" dulce numero: "+mzTablero[i][j]+ " ruta: "+ruta+" y nuevo html: "+strDulce);
+      //console.log($("#"+id));
     }
   }
 
   var $tablero = $("div[class^='col']");
-  var $dulces = $("div[class^='col'] img");
+  var $dulces = $(".elemento");
 
   $dulces.draggable({
-      //addClasses: false,
       connectToSortable: $tablero
   });
 
-  //$tablero.droppable({
-      //accept: $dulces
   $tablero.sortable();
 
 
-  /*$(".ui-droppable").sortable({
-    placeholder: "ui-state-highlight",
-    //opacity: .5,
-    helper: 'original',
-    beforeStop: function (event, ui) {
-        newItem = ui.item;
-    },
-    receive: function (event, ui) {
 
-    }
-  }).disableSelection().droppable({
-    over: ".ui-droppable",
-    activeClass: 'highlight',
-    drop: function (event, ui) {
-        //$(this).addClass("ui-state-highlight");
-    }
-  });
-*/
   //evento click en boton Iniciar/Reiniciar
   $(".btn-reinicio").on("click",function(){
     //Cambio Texto del boton
