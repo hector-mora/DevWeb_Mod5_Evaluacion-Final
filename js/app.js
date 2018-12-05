@@ -47,7 +47,6 @@ $(document).ready(function(){
   //Cargar valores a la matriz
   var mzTablero = new Array(numMaxRowCol+1);
   var strDulce;
-  var id=1;
 
   for (i = 0; i <= numMaxRowCol; i++)
   {
@@ -57,25 +56,28 @@ $(document).ready(function(){
     for (j = 0; j <= numMaxRowCol; j++)
     {
       eligeDulce();
-      mzTablero[i][j] = numero;
       strDulce = document.createElement("img");
-      strDulce.src = ruta;
-      strDulce.id = id;
+      $(strDulce)
+        .attr("src", ruta)
+        .addClass("elemento")
+        .draggable({
+          grid: [120,90],
+          revert: true,
+          revertDuration: 100
+        })
+        .droppable({
+          accept: ".elemento",
+          drop: function(event, ui){
+            var srcFrom = $(this).attr("src");
+            var srcTo = $(ui.draggable).attr("src");
+            $(this).attr("src", srcTo);
+            $(ui.draggable).attr("src", srcFrom);
+          }
+        })
+
       $("div[class^='col']")[i].prepend(strDulce);
-      $("#"+id).addClass("elemento");
-      id= id+1;
     }
   }
-
-  var $tablero = $("div[class^='col']");
-  var $dulces = $("div[class^='col'] img");
-
-  $dulces.draggable({
-      connectToSortable: $tablero
-  });
-
-  $tablero.sortable();
-
 
 
   //evento click en boton Iniciar/Reiniciar
