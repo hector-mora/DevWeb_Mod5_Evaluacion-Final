@@ -40,7 +40,7 @@ function eligeDulce(){
   return ruta;
 };
 
-function agregaDulces(){
+function agregaDulces(col){
   var ruta = "";
   //var strDulce;
   //var cantdulces = 0;
@@ -49,21 +49,21 @@ function agregaDulces(){
   var columna = "";
   var imagen = "";
 
-  for (j = 1; j <= numMaxRowCol; j++)
-  {
+  //for (j = 1; j <= numMaxRowCol; j++)
+  //{
     var vtop = 730;
-    espera = 100;
+    espera = 200;
     for (i = 1; i <= numMaxRowCol; i++)
     {
-      if ($(".col-"+j).children("img:nth-last-child("+i+")").css("top") == null) {
+      if ($("."+col).children("img:nth-last-child("+i+")").css("top") == null) {
         ruta = eligeDulce();
-        $(".col-"+j).prepend("<img src='"+ruta+"' class='elemento' style='position:absolute;top:30px;opacity: 0.35;'></img>");
-        $(".col-"+j).children("img:nth-last-child("+i+")").delay(espera).animate({opacity: 1, top: vtop+'px'},velocidad);
+        $("."+col).prepend("<img src='"+ruta+"' class='elemento' style='position:absolute;top:30px;opacity: 0.35;'></img>");
+        $("."+col).children("img:nth-last-child("+i+")").delay(espera).animate({opacity: 1, top: vtop+'px'},velocidad);
       }
       //espera += 100;
       vtop -= 99.4;
-    }
-  };
+    };
+  //};
 };
 
 function busHorizontal(){
@@ -87,20 +87,28 @@ function busHorizontal(){
   return resH
 }
 
-function busVertical(){
-  var resV = 0
+function busVertical(col){
+  var resV = 0;
+  var numCol = "";
   for (i = 1; i <= numMaxRowCol; i++)
   {
     for (j = 1; j <= numMaxRowCol; j++)
     {
-      var r1=$(".col-"+j).children("img:nth-last-child("+i+")").attr("src");
-			var r2=$(".col-"+j).children("img:nth-last-child("+(i+1)+")").attr("src");
-			var r3=$(".col-"+j).children("img:nth-last-child("+(i+2)+")").attr("src");
+      numCol = "col-"+j;
+
+      if (col != ""){
+        j=numMaxRowCol;
+        numCol = col;
+      }
+
+      var r1=$("."+numCol).children("img:nth-last-child("+i+")").attr("src");
+			var r2=$("."+numCol).children("img:nth-last-child("+(i+1)+")").attr("src");
+			var r3=$("."+numCol).children("img:nth-last-child("+(i+2)+")").attr("src");
       if((r1==r2) && (r2==r3) && (r2!=null) && (r3!=null))
       {
-        $(".col-"+j).children("img:nth-last-child("+i+")").attr("class","elemento activo");
-        $(".col-"+j).children("img:nth-last-child("+(i+1)+")").attr("class","elemento activo");
-        $(".col-"+j).children("img:nth-last-child("+(i+2)+")").attr("class","elemento activo");
+        $("."+numCol).children("img:nth-last-child("+i+")").attr("class","elemento activo");
+        $("."+numCol).children("img:nth-last-child("+(i+1)+")").attr("class","elemento activo");
+        $("."+numCol).children("img:nth-last-child("+(i+2)+")").attr("class","elemento activo");
         resV = 1
       }
     }
@@ -108,48 +116,38 @@ function busVertical(){
   return resV
 }
 
-/*
-function eliminaDulces(){
-  for (i = numMaxRowCol; i >= 1; i--)
-  {
-    for (j = numMaxRowCol; j >= 1; j--)
-    {
-      var valor=$(".col-"+j).children("img:nth-last-child("+i+")").attr("class");
-      if(valor=="elemento activo")
-      {
-        $(".col-"+j).children("img:nth-last-child("+i+")").effect("explode",100);
-        //$(".col-"+j).children("img:nth-last-child("+i+")").remove();
-      }
-    }
-  }
-}*/
 
-function desplaza() {
+function desplaza(col) {
 
-  espera = 100;
+  espera = 0;
 
-  for (j = 1; j <= numMaxRowCol; j++)
-  {
+  //for (j = 1; j <= numMaxRowCol; j++)
+  //{
     var vtop = 730;
     for (i = 1; i <= numMaxRowCol; i++)
     {
-      if ($(".col-"+j).children("img:nth-last-child("+i+")").css("top") != vtop+"px") {
-        $(".col-"+j).children("img:nth-last-child("+i+")").delay(espera).animate({top: vtop+'px'},velocidad);
+      if ($("."+col).children("img:nth-last-child("+i+")").css("top") != vtop+"px") {
+        $("."+col).children("img:nth-last-child("+i+")").delay(espera).animate({top: vtop+'px'},velocidad);
       }
       //espera += 10;
       vtop -= 99.4;
-    }
-  };
+    };
+  //};
 
 };
 
-function validaDulces(){
-  resH = busHorizontal();
-  resV = busVertical();
+function validaDulces(col){
+  if (col == ""){
+    resH = busHorizontal();
+    resV = busVertical("");
+  }
+  else {
+    resH = busHorizontal();
+    resV = busVertical(col);
+  }
 
   if((resH==1) || (resV==1)){
     deshacerMov = 0;
-    //$("div[class^='col']").css("justify-content","flex-end");
 
     //almaceno cantidas de dulces activos
     var cantActivos=$(".activo").length;
@@ -158,20 +156,25 @@ function validaDulces(){
     //Cambio en pantalla de puntuacion
 		$("#score-text").text(puntajeTotal);
 
-    //eliminar dulces iguales
-    //eliminaDulces();
-
     //remover dulces activos
-		$(".activo").remove();
+		//$(".activo").remove();
+    $(".activo").delay(200).hide(500,function(){
+      var col = this.parentElement.className;
+
+      $(this).remove();
+      desplaza(col);
+      agregaDulces(col);
+      validaDulces(col);
+    });
     $(".elemento").draggable({
       disabled:true
     });
 
-    desplaza();
+    //desplaza(columna);
 
     //relleno las columnas nuevamente
-    agregaDulces();
-    validaDulces();
+    //agregaDulces();
+    //validaDulces();
   }
   else {
     $(".elemento").draggable({
@@ -183,7 +186,10 @@ function validaDulces(){
       start: function(event, ui) {
           xpos = ui.position.left;
           ypos = ui.position.top;
-        }
+        }/*,
+      stop: function(event, ui) {
+        desplaza();
+      }*/
     });
 
     $(".elemento").droppable({
@@ -202,7 +208,7 @@ function validaDulces(){
           $(this).attr("src", imgDestino);
           $(ui.draggable).attr("src", imgOrigen);
           deshacerMov = 1;
-          validaDulces();
+          validaDulces("");
 
           //si no encontro coincidencias
           if (deshacerMov == 1) {
@@ -231,12 +237,16 @@ function reiniciar(){
   $("div[class^='col'] img").remove();
 
   //Cargar valores a las filas
-  agregaDulces();
+  for (x = 1; x <= 7; x++)
+  {
+    var col = "col-"+x;
+    agregaDulces(col);
+  }
 
   $("#score-text").text(puntajeTotal);
   $("#movimientos-text").text(cantMovimientos);
 
-  validaDulces()
+  validaDulces("");
 };
 
 $(document).ready(function(){
