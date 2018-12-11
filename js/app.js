@@ -5,7 +5,7 @@ var puntajeTotal = 0;
 var cantMovimientos = 0;
 var deshacerMov = 1;
 var espera = 0;
-var velocidad = 100;
+var velocidad = 200;
 
 //cambia el color original del titulo a un color más oscuro.
 function colorTitulo(elemento){
@@ -42,17 +42,11 @@ function eligeDulce(){
 
 function agregaDulces(col){
   var ruta = "";
-  //var strDulce;
-  //var cantdulces = 0;
   var imgOrigen = "";
   var imgDestino = "";
-  var columna = "";
-  var imagen = "";
 
-  //for (j = 1; j <= numMaxRowCol; j++)
-  //{
     var vtop = 730;
-    espera = 200;
+    espera = 100;
     for (i = 1; i <= numMaxRowCol; i++)
     {
       if ($("."+col).children("img:nth-last-child("+i+")").css("top") == null) {
@@ -60,10 +54,9 @@ function agregaDulces(col){
         $("."+col).prepend("<img src='"+ruta+"' class='elemento' style='position:absolute;top:30px;opacity: 0.35;'></img>");
         $("."+col).children("img:nth-last-child("+i+")").delay(espera).animate({opacity: 1, top: vtop+'px'},velocidad);
       }
-      //espera += 100;
       vtop -= 99.4;
     };
-  //};
+
 };
 
 function busHorizontal(){
@@ -121,18 +114,14 @@ function desplaza(col) {
 
   espera = 0;
 
-  //for (j = 1; j <= numMaxRowCol; j++)
-  //{
     var vtop = 730;
     for (i = 1; i <= numMaxRowCol; i++)
     {
       if ($("."+col).children("img:nth-last-child("+i+")").css("top") != vtop+"px") {
-        $("."+col).children("img:nth-last-child("+i+")").delay(espera).animate({top: vtop+'px'},velocidad);
+        $("."+col).children("img:nth-last-child("+i+")").delay(espera).animate({top: vtop+'px'},50);
       }
-      //espera += 10;
       vtop -= 99.4;
     };
-  //};
 
 };
 
@@ -149,19 +138,18 @@ function validaDulces(col){
   if((resH==1) || (resV==1)){
     deshacerMov = 0;
 
-    //almaceno cantidas de dulces activos
-    var cantActivos=$(".activo").length;
-    //calculos del puntaje
-		puntajeTotal= puntajeTotal+(cantActivos*10);
     //Cambio en pantalla de puntuacion
 		$("#score-text").text(puntajeTotal);
 
     //remover dulces activos
-		//$(".activo").remove();
-    $(".activo").delay(200).hide(500,function(){
+    $(".activo").delay(10).hide(1000,function(){
       var col = this.parentElement.className;
 
       $(this).remove();
+
+      //calculos del puntaje
+      puntajeTotal = puntajeTotal+10;
+
       desplaza(col);
       agregaDulces(col);
       validaDulces(col);
@@ -170,11 +158,6 @@ function validaDulces(col){
       disabled:true
     });
 
-    //desplaza(columna);
-
-    //relleno las columnas nuevamente
-    //agregaDulces();
-    //validaDulces();
   }
   else {
     $(".elemento").draggable({
@@ -186,10 +169,7 @@ function validaDulces(col){
       start: function(event, ui) {
           xpos = ui.position.left;
           ypos = ui.position.top;
-        }/*,
-      stop: function(event, ui) {
-        desplaza();
-      }*/
+        }
     });
 
     $(".elemento").droppable({
@@ -240,9 +220,12 @@ function reiniciar(){
   for (x = 1; x <= 7; x++)
   {
     var col = "col-"+x;
-    agregaDulces(col);
+    agregaDulces(col)
   }
 
+  $(".panel-score").css("width","25%");
+	$(".panel-tablero").show();
+	$(".time").show();
   $("#score-text").text(puntajeTotal);
   $("#movimientos-text").text(cantMovimientos);
 
